@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "PlaylistModuleClient": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

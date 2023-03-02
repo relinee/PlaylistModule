@@ -1,24 +1,18 @@
 ﻿namespace PlaylistModule
 {
-    public class PlaylistSong
-    {
-        public int Id { get; set; }
-        public Song SongData { get; set; }
-    }
-
     public class Playlist
     {
-        private readonly LinkedList<PlaylistSong> _songs = new LinkedList<PlaylistSong>();
-        private LinkedListNode<PlaylistSong>? _currentSong;
+        private readonly LinkedList<Song> _songs = new LinkedList<Song>();
+        private LinkedListNode<Song>? _currentSong;
         private CancellationTokenSource? _tokenSource;
         private bool _isPlaying = false;
         private int _currentPosition = 0;
         public int CountSongs => _songs.Count; 
         public bool IsPlaying => _isPlaying;
 
-        public Playlist(List<PlaylistSong> songs)
+        public Playlist(List<Song> songs)
         {
-            _songs = new LinkedList<PlaylistSong>(songs);
+            _songs = new LinkedList<Song>(songs);
             _currentSong = _songs.First;
         }
 
@@ -43,7 +37,7 @@
                     var song = _currentSong.Value;
 
                     //await Task.Delay(song.Duration, _tokenSource.Token);
-                    while (_isPlaying && _currentPosition < song.SongData.Duration)
+                    while (_isPlaying && _currentPosition < song.Duration)
                     {
                         await Task.Delay(1000);
                         _currentPosition++;
@@ -77,7 +71,7 @@
             _currentSong = null;
         }
 
-        public void AddSong(PlaylistSong song)
+        public void AddSong(Song song)
         {
             lock (_songs)
             {
@@ -85,11 +79,12 @@
             }
         }
 
-        public void UpdateSong(int id, Song newSongData)
+        public void UpdateSong(int id, string title, int duration)
         {
             lock(_songs)
             {
-                _songs.First(item => item.Id == id).SongData = newSongData;
+                _songs.First(item => item.Id == id).Title = title;
+                _songs.First(item => item.Id == id).Duration = duration;
             }
         }
 
@@ -133,9 +128,9 @@
                 Play();
         }
 
-        public PlaylistSong? CurrentSong => _currentSong?.Value;
+        public Song? CurrentSong => _currentSong?.Value;
 
-        public IEnumerable<PlaylistSong> Songs
+        public IEnumerable<Song> Songs
         {
             get
             {

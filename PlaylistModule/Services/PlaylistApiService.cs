@@ -27,7 +27,7 @@ namespace PlaylistModule.Services
             if (song == null)
                 throw new RpcException(new Status(StatusCode.Internal, "Song is null!"));
 
-            return await Task.FromResult<SongReply>(new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration });
+            return await Task.FromResult<SongReply>(new SongReply() { Id = song.Id, Title = song.Title, Duration = song.Duration });
         }
 
         public override async Task<SongReply> Pause(Empty request, ServerCallContext context)
@@ -40,7 +40,7 @@ namespace PlaylistModule.Services
 
             if (song == null)
                 throw new RpcException(new Status(StatusCode.Internal, "Song is null!"));
-            return await Task.FromResult<SongReply>(new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration });
+            return await Task.FromResult<SongReply>(new SongReply() { Id = song.Id, Title = song.Title, Duration = song.Duration });
         }
 
         public override async Task<SongReply> AddSong(AddSongRequest request, ServerCallContext context)
@@ -48,12 +48,12 @@ namespace PlaylistModule.Services
             if (await db.Songs.FindAsync(request.Title) == null)
                 throw new RpcException(new Status(StatusCode.AlreadyExists, "The song has already been added!"));
 
-            var song = new PlaylistSong { SongData = new Song(request.Title, request.Duration)};
+            var song = new Song { Title = request.Title, Duration = request.Duration};
             await db.Songs.AddAsync(song);
             await db.SaveChangesAsync();
             playlist.AddSong(song);
 
-            var reply = new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration };
+            var reply = new SongReply() { Id = song.Id, Title = song.Title, Duration = song.Duration };
             return await Task.FromResult(reply);
         }
 
@@ -64,12 +64,12 @@ namespace PlaylistModule.Services
             if (song == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "Song not found"));
 
-            song.SongData.Title = request.Title;
-            song.SongData.Duration = request.Duration;
+            song.Title = request.Title;
+            song.Duration = request.Duration;
             await db.SaveChangesAsync();
-            playlist.UpdateSong(song.Id, song.SongData);
+            playlist.UpdateSong(song.Id, song.Title, song.Duration);
 
-            var reply = new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration };
+            var reply = new SongReply() { Id = song.Id, Title = song.Title, Duration = song.Duration };
             return await Task.FromResult(reply);
         }
 
@@ -79,7 +79,7 @@ namespace PlaylistModule.Services
             if (song == null)
                 throw new RpcException(new Status(StatusCode.NotFound, "Song not found"));
 
-            var reply = new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration };
+            var reply = new SongReply() { Id = song.Id, Title = song.Title, Duration = song.Duration };
             return await Task.FromResult(reply);
         }
 
@@ -90,7 +90,7 @@ namespace PlaylistModule.Services
 
             var listReply = new SongList();
             var songList = playlist.Songs.Select(item => new SongReply()
-                { Id = item.Id, Title = item.SongData.Title, Duration = item.SongData.Duration }).ToList();
+                { Id = item.Id, Title = item.Title, Duration = item.Duration }).ToList();
 
             listReply.Songs.AddRange(songList);
             return await Task.FromResult(listReply);
@@ -108,7 +108,7 @@ namespace PlaylistModule.Services
             playlist.DeleteSong(song.Id);
             db.Songs.Remove(song);
 
-            var reply = new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration };
+            var reply = new SongReply() { Id = song.Id, Title = song.Title, Duration = song.Duration };
             return await Task.FromResult(reply);
         }
 
@@ -123,7 +123,7 @@ namespace PlaylistModule.Services
             if (song == null)
                 throw new RpcException(new Status(StatusCode.Internal, "Current Song is null!"));
 
-            var reply = new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration };
+            var reply = new SongReply() { Id = song.Id, Title = song.Title, Duration = song.Duration };
 
             return await Task.FromResult(reply);
         }
@@ -139,7 +139,7 @@ namespace PlaylistModule.Services
             if (song == null)
                 throw new RpcException(new Status(StatusCode.Internal, "Current Song is null!"));
 
-            var reply = new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration };
+            var reply = new SongReply() { Id = song.Id, Title = song.Title, Duration = song.Duration };
             return await Task.FromResult(reply);
         }
     }
