@@ -13,6 +13,8 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.MapGrpcService<PlaylistApiService>();
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "The server is up and running");
 
 app.Run();
+
+// https://localhost:32768 - сервис доступен по адресу

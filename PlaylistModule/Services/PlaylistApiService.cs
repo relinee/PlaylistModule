@@ -16,7 +16,7 @@ namespace PlaylistModule.Services
             playlist = new Playlist(db.Songs.ToList());
         }
 
-        public override Task<SongReply> Play(Empty request, ServerCallContext context)
+        public override async Task<SongReply> Play(Empty request, ServerCallContext context)
         {
             if (playlist.CountSongs == 0)
                 throw new RpcException(new Status(StatusCode.Cancelled, "Playlist is empty!"));
@@ -27,10 +27,10 @@ namespace PlaylistModule.Services
             if (song == null)
                 throw new RpcException(new Status(StatusCode.Internal, "Song is null!"));
 
-            return Task.FromResult<SongReply>(new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration });
+            return await Task.FromResult<SongReply>(new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration });
         }
 
-        public override Task<SongReply> Pause(Empty request, ServerCallContext context)
+        public override async Task<SongReply> Pause(Empty request, ServerCallContext context)
         {
             if (playlist.CountSongs == 0)
                 throw new RpcException(new Status(StatusCode.Cancelled, "Playlist is empty!"));
@@ -40,7 +40,7 @@ namespace PlaylistModule.Services
 
             if (song == null)
                 throw new RpcException(new Status(StatusCode.Internal, "Song is null!"));
-            return Task.FromResult<SongReply>(new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration });
+            return await Task.FromResult<SongReply>(new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration });
         }
 
         public override async Task<SongReply> AddSong(AddSongRequest request, ServerCallContext context)
@@ -83,7 +83,7 @@ namespace PlaylistModule.Services
             return await Task.FromResult(reply);
         }
 
-        public override Task<SongList> GetAllSongs(Empty request, ServerCallContext context)
+        public override async Task<SongList> GetAllSongs(Empty request, ServerCallContext context)
         {
             if (playlist.CountSongs == 0)
                 throw new RpcException(new Status(StatusCode.Cancelled, "Playlist is empty!"));
@@ -93,7 +93,7 @@ namespace PlaylistModule.Services
                 { Id = item.Id, Title = item.SongData.Title, Duration = item.SongData.Duration }).ToList();
 
             listReply.Songs.AddRange(songList);
-            return Task.FromResult(listReply);
+            return await Task.FromResult(listReply);
         }
 
         public override async Task<SongReply> DeleteSong(DeleteSongRequest request, ServerCallContext context)
@@ -112,7 +112,7 @@ namespace PlaylistModule.Services
             return await Task.FromResult(reply);
         }
 
-        public override Task<SongReply> Next(Empty request, ServerCallContext context)
+        public override async Task<SongReply> Next(Empty request, ServerCallContext context)
         {
             if (playlist.CountSongs == 0)
                 throw new RpcException(new Status(StatusCode.Cancelled, "Playlist is empty!"));
@@ -125,10 +125,10 @@ namespace PlaylistModule.Services
 
             var reply = new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration };
 
-            return Task.FromResult(reply);
+            return await Task.FromResult(reply);
         }
 
-        public override Task<SongReply> Prev(Empty request, ServerCallContext context)
+        public override async Task<SongReply> Prev(Empty request, ServerCallContext context)
         {
             if (playlist.CountSongs == 0)
                 throw new RpcException(new Status(StatusCode.Cancelled, "Playlist is empty!"));
@@ -140,7 +140,7 @@ namespace PlaylistModule.Services
                 throw new RpcException(new Status(StatusCode.Internal, "Current Song is null!"));
 
             var reply = new SongReply() { Id = song.Id, Title = song.SongData.Title, Duration = song.SongData.Duration };
-            return Task.FromResult(reply);
+            return await Task.FromResult(reply);
         }
     }
 }
