@@ -1,0 +1,56 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "PlaylistModule";
+
+import "google/protobuf/empty.proto";
+
+package Playlist;
+
+message SongReply {
+	int32 id = 1;
+	string title = 2;
+	int32 duration = 3;
+}
+
+message AddSongRequest {
+	string title = 1;
+	int32 duration = 2;
+}
+
+message UpdateSongRequest {
+	int32 id = 1;
+	string title = 2;
+	int32 duration = 3;
+}
+
+message GetSongRequest {
+	int32 song_id = 1;
+}
+
+message SongList {
+	repeated SongReply songs = 1;
+}
+
+message DeleteSongRequest {
+	int32 song_id = 1;
+}
+
+service PlaylistService {
+	rpc Play (google.protobuf.Empty) returns (SongReply);
+
+	rpc Pause (google.protobuf.Empty) returns (SongReply);
+
+	rpc AddSong (AddSongRequest) returns (SongReply);
+
+	rpc UpdateSong (UpdateSongRequest) returns (SongReply);
+
+	rpc GetCurrentSong (GetSongRequest) returns (SongReply);
+
+	rpc GetAllSongs (google.protobuf.Empty) returns (SongList);
+
+	rpc DeleteSong (DeleteSongRequest) returns (SongReply);
+
+	rpc Next (google.protobuf.Empty) returns (SongReply);
+
+	rpc Prev (google.protobuf.Empty) returns (SongReply);
+}
