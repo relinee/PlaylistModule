@@ -11,10 +11,7 @@ builder.Services.AddDbContext<ApplicationContext>(option => option.UseNpgsql(con
 builder.Services.AddGrpc();
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 app.MapGrpcService<PlaylistApiService>();
 app.MapGet("/", () => "The server is up and running");
 
 app.Run();
-
-// https://localhost:32768 - сервис доступен по адресу
